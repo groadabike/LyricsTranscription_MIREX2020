@@ -1,4 +1,12 @@
-# Automatic Vocal Enhancement and Lyrics Transcription
+<div align="center">
+
+**Automatic Vocal Enhancement and Lyrics Transcription.**
+
+
+</div>
+
+--------------------------------------------------------------------------------
+
 This repository stores the scripts submitted to MIREX 2020:Lyrics Transcription task.
 
 The system relies on [Asteroid Pytorch-based audio source separation toolkit](https://github.com/mpariente/asteroid) and
