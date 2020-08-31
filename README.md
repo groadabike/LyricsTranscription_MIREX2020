@@ -1,5 +1,4 @@
 <div align="center">
-
 **Automatic Vocal Enhancement and Lyrics Transcription.**
 
 
@@ -11,6 +10,10 @@ This repository stores the scripts submitted to MIREX 2020:Lyrics Transcription 
 
 The system relies on [Asteroid Pytorch-based audio source separation toolkit](https://github.com/mpariente/asteroid) and
 for the vocal enhancement pre-process stage, and on [Kaldi ASR toolkit](http://kaldi-asr.org/) for the transcription stage. 
+
+## Content
+- [Installation](#installation)
+
 
 ## Installation
 First, you need to download and install Kaldi toolkit as:
