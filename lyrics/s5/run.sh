@@ -13,6 +13,7 @@
 # Apache 2.0
 nj=1
 stage=0
+python_path=$HOME/miniconda3/bin/python
 
 . ./path.sh
 . ./cmd.sh
@@ -24,11 +25,12 @@ echo "Using steps and utils from WSJ recipe"
 
 . ./utils/parse_options.sh
 if [ $# != 2 ]; then
-    echo "Usage: $0 [options] <input_audio> <input_txt> <output> <dataset_name>"
-    echo "e.g.: Denoting the input .wav file path and name as %input_audio, "
-    echo "the lyrics .txt file as %input_txt, the output file path and "
-    echo "name as %output and the dataset name %dataset. The script should be called as"
-    echo "$0 %input_audio %input_txt  %output %dataset"
+    echo "Usage: $0 [options] %input_audio <output>"
+    echo "e.g.: Denoting the input audio file path %input_audio, "
+    echo "and the path to the output file as %output, the script should be called as"
+    echo "$0 --python_path python %input_audio %output"
+    echo "[Option]"
+    echo "--python_path     Path to the python you'll use for the transcription"
     echo ""   
     exit 1;
 fi
@@ -44,10 +46,8 @@ audio_id=${audio_id//./_}
 set -e 
 set -o pipefail
 
-# This script also needs the phonetisaurus g2p, srilm, sox
+# This script needs sox and ffmpeg
 ./local/check_tools.sh || exit 1
-python_path=$HOME/miniconda3/bin/python
-
 
 dir=exp/chain/tdnn_sp
 graph_dir=$dir/graph_3G

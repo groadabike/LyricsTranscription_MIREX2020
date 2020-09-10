@@ -6,7 +6,7 @@ import soundfile as sf
 import librosa
 
 from asteroid.models import ConvTasNet
-
+from asteroid.dsp.overlap_add import LambdaOverlapAdd
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input_audio', type=str, required=True)
@@ -30,10 +30,21 @@ def load_audio(audio_path, sr):
 def main(conf):
     #model = ConvTasNet.from_pretrained('Cosentino/ConvTasNet_LibriMix_sep_noisy')
     model = ConvTasNet.from_pretrained('vsep/model.pth')
+    model = LambdaOverlapAdd(
+        nnet=model,  # function to apply to each segment.
+        n_src=2,  # number of sources in the output of nnet
+        window_size=64000,  # Size of segmenting window
+        hop_size=None,  # segmentation hop size
+        window="hanning",  # Type of the window (see scipy.signal.get_window
+        reorder_chunks=True,  # Whether to reorder each consecutive segment.
+        enable_grad=False,  # Set gradient calculation on of off (see torch.set_grad_enabled)
+    )
+
     # Handle device placement
     if conf['use_gpu']:
         model.cuda()
     print(os.path.join(conf['out_dir'], 'enhaced.wav'))
+
     model_device = next(model.parameters()).device
 
     os.makedirs(conf['out_dir'], exist_ok=True)
