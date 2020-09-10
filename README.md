@@ -2,7 +2,7 @@
 
 <div align="center">
 <img src="images/system_pipeline.png" width="100%">
-
+** Diagram of the system pipeline. ** 
 </div>
 
 --------------------------------------------------------------------------------
