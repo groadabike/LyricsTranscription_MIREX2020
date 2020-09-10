@@ -70,7 +70,7 @@ Note that the %output will be overwritten if exist.
 ## Cite
 ```
 @inproceedings{Roa-Mirex2020,
-  title={Automatic Vocal Enhancement and Lyrics Transcription},
+  title={Automatic Vocal Separation and Lyrics Transcription},
   year={2020},
   booktitle={International Society for Music Information Retrieval (ISMIR)},
   author={Roa Dabike, Gerardo and Barker, Jon}
