@@ -1,7 +1,7 @@
 # Automatic Vocal Separation and Lyrics Transcription.
 
 <div align="center">
-<img src="images/system_pipeline.png" width="50%">
+<img src="images/system_pipeline.png" width="100%">
 
 </div>
 
