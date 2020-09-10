@@ -14,9 +14,9 @@ This repository stores the system submitted to [MIREX 2020:Lyrics Transcription 
 ## What we submitted?
 
 We submitted a system composed of two modules connected in a pipeline; a source separation and a lyrics transcription module. 
-In this system, we utilised [Asteroid Pytorch-based audio source separation toolkit](https://github.com/mpariente/asteroid) 
+In this system, we utilised [Asteroid Pytorch-based audio source separation toolkit](https://github.com/mpariente/asteroid)[1] 
 for the construction of the vocal separation module. The lyrics transcription module was constructed using 
-the [Kaldi ASR toolkit](http://kaldi-asr.org/). 
+the [Kaldi ASR toolkit](http://kaldi-asr.org/)[2]. 
 
 ## Content
 - [Installation](#installation)
@@ -60,11 +60,12 @@ copy srilm.tar.gz into kaldi/tools and run
 ```
 
 ## Usage
-
+Clone this project and run it as:
 ```bash
-run.sh 
-
+run.sh %input_audio %output
 ```
+Where %input_audio is the path to the audio to transcribed and %output is the path to the file where the transcription will be saved.
+Note that the %output will be overwritten if exist.
 
 ## Cite
 ```
@@ -77,4 +78,14 @@ run.sh
 ```
 
 ## References
+```text
+[1] Manuel Pariente, Samuele Cornell, Joris Cosentino, Sunit Sivasankaran, Efthymios Tzinis, Jens Heitkaemper, 
+    Michel Olvera, Fabian-Robert Sẗoter, Mathieu Hu, Juan M. Martin-Donas, David Ditter, Ariel Frank, 
+    Antoine Deleforge, and Emmanuel Vincent. Asteroid: the PyTorch-based audio source separation toolkit for 
+    researchers. In Proc. Interspeech, 2020.
+
+[2] Daniel Povey, Arnab Ghoshal, Gilles Boulianne, LukasBurget, Ondrej Glembek, Nagendra Goel, Mirko Hannemann,  
+    Petr Motlicek,  Yanmin Qian, Petr Schwarz,Jan Silovsky, Georg Stemmer, and Karel Vesely. The Kaldi speech 
+    recognition toolkit. In IEEE 2011 Workshop on Automatic Speech Recognition and Understanding (ASRU), 2011.
+```
 
