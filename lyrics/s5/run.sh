@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Vocal separation and lyrics trancription. 
-# In this recipe, we implemented a vocal separation stage previous the ASR training.
+# In this recipe, we implemented a vocal separation infer stage previous the ASR training.
 # 1- The vocal separation stage is based on the Asteroid implementation
 # of Convolutiona TasNet. We used a subset of the DAMP-VSEP corpus to train it.
 # The transcription stage is based on the librispeech recipe. For training the ASR
@@ -62,7 +62,6 @@ if [[ ! -f $lang/G.fst ]]; then
   tar -xf G.tar.xz G.fst
   popd
 fi
-exit;
 
 BLUE='\033[1;34m'
 GREEN='\033[1;32m'

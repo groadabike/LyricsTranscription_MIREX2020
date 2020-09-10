@@ -1,5 +1,5 @@
 <div align="center">
-**Automatic Vocal Enhancement and Lyrics Transcription.**
+**Automatic Vocal Separation and Lyrics Transcription.**
 
 
 </div>
