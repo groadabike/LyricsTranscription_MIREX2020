@@ -9,7 +9,7 @@
 
 --------------------------------------------------------------------------------
 
-This repository stores the system submitted to MIREX 2020:Lyrics Transcription task.
+This repository stores the system submitted to [MIREX 2020:Lyrics Transcription task](https://www.music-ir.org/mirex/wiki/2020:Lyrics_Transcription).
 
 ## What we submited?
 
