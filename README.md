@@ -9,10 +9,14 @@
 
 --------------------------------------------------------------------------------
 
-This repository stores the scripts submitted to MIREX 2020:Lyrics Transcription task.
+This repository stores the system submitted to MIREX 2020:Lyrics Transcription task.
 
-The system relies on [Asteroid Pytorch-based audio source separation toolkit](https://github.com/mpariente/asteroid) and
-for the vocal enhancement pre-process stage, and on [Kaldi ASR toolkit](http://kaldi-asr.org/) for the transcription stage. 
+## What we submited?
+
+We submitted a system composed by two modules connected in a pipeline; a source separation and a lyrics transciption module. 
+In this system, we utilised [Asteroid Pytorch-based audio source separation toolkit](https://github.com/mpariente/asteroid) 
+for the construction of the vocal separation module. The lyrics transcription module was constructed using 
+the [Kaldi ASR toolkit](http://kaldi-asr.org/). 
 
 ## Content
 - [Installation](#installation)
@@ -66,3 +70,6 @@ make -j clean depend; make -j 4
   author={Roa Dabike, Gerardo and Barker, Jon}
 }
 ```
+
+## References
+
