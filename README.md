@@ -79,13 +79,14 @@ Note that the %output will be overwritten if exist.
 
 ## References
 ```text
-[1] Manuel Pariente, Samuele Cornell, Joris Cosentino, Sunit Sivasankaran, Efthymios Tzinis, Jens Heitkaemper, 
-    Michel Olvera, Fabian-Robert Sẗoter, Mathieu Hu, Juan M. Martin-Donas, David Ditter, Ariel Frank, 
-    Antoine Deleforge, and Emmanuel Vincent. Asteroid: the PyTorch-based audio source separation toolkit for 
-    researchers. In Proc. Interspeech, 2020.
+[1] Manuel Pariente, Samuele Cornell, Joris Cosentino, Sunit Sivasankaran, Efthymios Tzinis, 
+    Jens Heitkaemper, Michel Olvera, Fabian-Robert Sẗoter, Mathieu Hu, Juan M. Martin-Donas, 
+    David Ditter, Ariel Frank, Antoine Deleforge, and Emmanuel Vincent. Asteroid: the 
+    PyTorch-based audio source separation toolkit for researchers. In Proc. Interspeech, 2020.
 
-[2] Daniel Povey, Arnab Ghoshal, Gilles Boulianne, LukasBurget, Ondrej Glembek, Nagendra Goel, Mirko Hannemann,  
-    Petr Motlicek,  Yanmin Qian, Petr Schwarz,Jan Silovsky, Georg Stemmer, and Karel Vesely. The Kaldi speech 
-    recognition toolkit. In IEEE 2011 Workshop on Automatic Speech Recognition and Understanding (ASRU), 2011.
+[2] Daniel Povey, Arnab Ghoshal, Gilles Boulianne, LukasBurget, Ondrej Glembek, Nagendra Goel, 
+    Mirko Hannemann, Petr Motlicek,  Yanmin Qian, Petr Schwarz,Jan Silovsky, Georg Stemmer, 
+    and Karel Vesely. The Kaldi speech recognition toolkit. In IEEE 2011 Workshop on Automatic 
+    Speech Recognition and Understanding (ASRU), 2011.
 ```
 
