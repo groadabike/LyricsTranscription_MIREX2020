@@ -14,6 +14,7 @@
 nj=1
 stage=0
 use_gpu=1
+python_path=python
 
 . ./path.sh
 . ./cmd.sh
@@ -47,7 +48,7 @@ set -e
 set -o pipefail
 
 # This script needs sox and ffmpeg
-./local/check_tools.sh || exit 1
+#./local/check_tools.sh || exit 1
 
 dir=exp/chain/tdnn_sp
 graph_dir=$dir/graph_3G
@@ -70,9 +71,10 @@ if [[ stage -le 0 ]]; then
   echo -e "Starting transcription of ${GREEN}${input_audio}${NC}"
   echo -ne "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Enhancing vocal audio segment\r"
 
-  $python_path local/audio_enhancement.py \
+  $python_path local/audio_infer.py \
       --out_dir data/$audio_id \
-      --input_audio $input_audio
+      --input_audio $input_audio \
+      --use_gpu $use_gpu
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Enhancing vocal audio segment........done"
 fi
 

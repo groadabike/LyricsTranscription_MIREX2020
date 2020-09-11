@@ -12,11 +12,3 @@
 export train_cmd="run.pl"
 export decode_cmd="run.pl"
 
-if [[ "$HOSTNAME" == *"sharc"* ]]; then
-    export train_cmd="queue.pl --mem 12G"
-    export decode_cmd="queue.pl --mem 12G"
-fi
-if [[ "$HOSTNAME" == *"bessemer"* ]]; then
-    export train_cmd="slurm.pl --mem 12G"
-    export decode_cmd="slurm.pl --mem 12G"
-fi

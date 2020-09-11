@@ -1,19 +1,12 @@
 import os
-import random
-import soundfile as sf
 import torch
-import yaml
-import json
 import argparse
-import pandas as pd
-from tqdm import tqdm
-from pprint import pprint
 import numpy as np
-from pathlib import Path
 import soundfile as sf
 import librosa
 
 from asteroid.models import ConvTasNet
+from asteroid.dsp.overlap_add import LambdaOverlapAdd
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input_audio', type=str, required=True)
@@ -37,6 +30,17 @@ def load_audio(audio_path, sr):
 def main(conf):
     #model = ConvTasNet.from_pretrained('groadabike/ConvTasNet_DAMP-VSEP_enhboth')
     model = ConvTasNet.from_pretrained('local/vsep/model.pth')
+
+    model = LambdaOverlapAdd(
+        nnet=model,  # function to apply to each segment.
+        n_src=2,  # number of sources in the output of nnet
+        window_size=64000,  # Size of segmenting window
+        hop_size=None,  # segmentation hop size
+        window="hanning",  # Type of the window (see scipy.signal.get_window
+        reorder_chunks=True,  # Whether to reorder each consecutive segment.
+        enable_grad=False,  # Set gradient calculation on of off (see torch.set_grad_enabled)
+    )
+
     # Handle device placement
     if conf['use_gpu']:
         model.cuda()
@@ -44,15 +48,14 @@ def main(conf):
     model_device = next(model.parameters()).device
 
     os.makedirs(conf['out_dir'], exist_ok=True)
-    torch.no_grad().__enter__()
-    
+
     # Loading mixture
     mix = load_audio(conf["input_audio"], conf["sample_rate"])
     mix = torch.from_numpy(mix)
     mix = mix.to(model_device)
 
     # Enhance mixture
-    est_sources = model(mix.unsqueeze(0))
+    est_sources = model.forward(mix.unsqueeze(0).unsqueeze(1))
     mix_np = mix.squeeze(0).cpu().data.numpy()
     
     est_sources_np = est_sources.squeeze(0).cpu().data.numpy()
