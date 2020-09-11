@@ -5,8 +5,9 @@ channels:
   - pytorch
 
 dependencies:
+  - python=3.7
   - ffmpeg==4.3.1
-  - sox==14.4.4
+  - sox==14.4.2
   - pip
   - pip:
       - asteroid==0.3.3

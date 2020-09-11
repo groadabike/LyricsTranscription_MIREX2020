@@ -3,9 +3,9 @@
 # Vocal separation and lyrics trancription. 
 # In this recipe, we implemented a vocal separation infer stage previous the ASR training.
 # 1- The vocal separation stage is based on the Asteroid implementation
-# of Convolutiona TasNet. We used a subset of the DAMP-VSEP corpus to train it.
-# The transcription stage is based on the librispeech recipe. For training the ASR
-# We used the DSing dataset, a preprocessed version of the DAMP Sing!300x30x2 
+# of Convolutional TasNet. We used a subset of the DAMP-VSEP corpus to train it.
+# The transcription stage is based on the librispeech recipe. For training
+# we used the DSing dataset, a preprocessed version of the DAMP Sing!300x30x2
 # published on Interspeech 2019. 
 #
 # Copyright 2020  Gerardo Roa Dabike
@@ -14,6 +14,7 @@
 nj=1
 stage=0
 use_gpu=1
+enh_samples=16000
 python_path=python
 
 . ./path.sh
@@ -25,6 +26,8 @@ echo "Using steps and utils from WSJ recipe"
 
 
 . ./utils/parse_options.sh
+source activate mirex_grd
+
 if [ $# != 2 ]; then
     echo "Usage: $0 [options] %input_audio <output>"
     echo "e.g.: Denoting the input audio file path %input_audio, "
@@ -72,6 +75,7 @@ if [[ stage -le 0 ]]; then
   echo -ne "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Enhancing vocal audio segment\r"
 
   $python_path local/audio_infer.py \
+      --enh_samples $enh_samples \
       --out_dir data/$audio_id \
       --input_audio $input_audio \
       --use_gpu $use_gpu
@@ -121,16 +125,11 @@ pitch_dir=data/$audio_id/${audio_id}_pitch
 feat_to_join="$feat_to_join  $pitch_dir"
 if [[ stage -le 4 ]]; then
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting pitch features"
-
-  if [ -f "$pitch_dir/feats.scp" ]; then
-    echo $pitch_dir/feats.scp " exist! It will not be extracted again"
-  else
-    utils/copy_data_dir.sh $mfcc_dir $pitch_dir
-    utils/fix_data_dir.sh $pitch_dir
-    local/features/make_pitch.sh --nj $nj --cmd "$train_cmd" \
-      --pitch-config $pitch_conf $pitch_dir
-    steps/compute_cmvn_stats.sh $pitch_dir
-  fi
+  utils/copy_data_dir.sh $mfcc_dir $pitch_dir
+  utils/fix_data_dir.sh $pitch_dir
+  local/features/make_pitch.sh --nj $nj --cmd "$train_cmd" \
+    --pitch-config $pitch_conf $pitch_dir
+  steps/compute_cmvn_stats.sh $pitch_dir
 
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting pitch features......done"
 fi
@@ -140,16 +139,12 @@ feat_to_join="$feat_to_join  $perturb_dir"
 if [[ stage -le 5 ]]; then
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting perturbation features"
 
-  if [ -f "$perturb_dir/feats.scp" ]; then
-    echo $perturb_dir/feats.scp " exist! It will not be extracted again"
-  else
-    utils/copy_data_dir.sh $mfcc_dir $perturb_dir
-    utils/fix_data_dir.sh $perturb_dir
-    local/features/make_jitter.sh --nj $nj --cmd "$train_cmd" \
-      --jitter_conf $perturbation_conf --python_path $python_path \
-      $perturb_dir
-    steps/compute_cmvn_stats.sh $perturb_dir
-  fi
+  utils/copy_data_dir.sh $mfcc_dir $perturb_dir
+  utils/fix_data_dir.sh $perturb_dir
+  local/features/make_jitter.sh --nj $nj --cmd "$train_cmd" \
+    --jitter_conf $perturbation_conf --python_path $python_path \
+    $perturb_dir
+  steps/compute_cmvn_stats.sh $perturb_dir
 
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting perturbation features......done"
 fi

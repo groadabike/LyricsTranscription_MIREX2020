@@ -31,25 +31,6 @@ Clone this repository with:
 git clone https://github.com/groadabike/LyricsTranscription_MIREX2020.git 
 ```
 
-### Install Kaldi
-
-First, we need to download and install Kaldi toolkit.
-The script extras/check_dependencies.sh will tell you if you need to install some Kaldi dependencies.  
-Please, ensure you resolve all the comments before you can continue.
-Be sure that the `--cuda-dir` parameter is directed to your cuda installation.
-```bash
-git clone https://github.com/kaldi-asr/kaldi.git kaldi --origin upstream
-
-cd kaldi/tools
-touch python/.use_default_python
-./extras/check_dependencies.sh
-make
-
-cd ../scr
-./configure --shared --cudatk-dir=/usr/local/cuda
-make -j clean depend; make -j 4
-```
-
 ### Prepare Python environment
 
 If you have Anaconda installed, you can create the environment from the root of this repository:
@@ -59,15 +40,49 @@ conda env update -f environment-mirex_grd-cpu.yml # If you don't have GPU's
 conda activate mirex_grd
 ```
 
+### Install Kaldi
+
+First, we need to download and install Kaldi toolkit.
+The script extras/check_dependencies.sh will tell you if you need to install some Kaldi dependencies.  
+Please, ensure you resolve all the comments before you can continue.
+Be sure that the `--cuda-dir` parameter is directed to your cuda installation.
+```bash
+git clone https://github.com/kaldi-asr/kaldi.git kaldi
+
+cd kaldi/tools
+mkdir -p python
+touch python/.use_default_python
+./extras/check_dependencies.sh
+make
+
+cd ../src
+./configure --shared --cudatk-dir=$CUDA_HOME
+make -j clean depend; make -j <NCPU>
+```
+
 ## Usage
+Before run this program for the first time, edit KALDI_ROOT path in `path.sh` file.
+```bash
+export KALDI_ROOT=path/to/your/kaldi_root
+e.g.:
+export KALDI_ROOT=/home/<user>/kaldi
+```
+
 Run this program as:    
 ```bash
+conda activate mirex_grd
+
 ./run.sh [options] %input_audio %output
-./run.sh --use_gpu 1 %input_audio %output
+./run.sh --python_path $CONDA_PREFIX/bin/python --use_gpu 1 %input_audio %output
 [options]
---use_gpu  0 = False | 1 = True
-           Default: 1
+--use_gpu       Whether or not us GPU, 
+                0 = False | 1 = True
+                Default: 1
+--enh_samples   (int) Number of samples for chunk inferring.
+                Increase for faster inferring.
+                Default: 16000 (Suitable for GPU with 2GB RAM)
 ```
+
 Where %input_audio is the path to the audio to transcribed and %output is the path to the file where the transcription will be saved.
 Note that the %output will be overwritten if exist.
 

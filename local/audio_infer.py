@@ -1,3 +1,4 @@
+
 import os
 import torch
 import argparse
@@ -15,6 +16,7 @@ parser.add_argument('--out_dir', type=str, required=True,
 parser.add_argument('--use_gpu', type=int, default=0,
                     help='Whether to use the GPU for model execution')
 parser.add_argument('--sample_rate', type=int, default=16000)
+parser.add_argument('--enh_samples', type=int, default=16000)
 
 
 def load_audio(audio_path, sr):
@@ -34,7 +36,7 @@ def main(conf):
     model = LambdaOverlapAdd(
         nnet=model,  # function to apply to each segment.
         n_src=2,  # number of sources in the output of nnet
-        window_size=64000,  # Size of segmenting window
+        window_size=conf['enh_samples'],  # Size of segmenting window
         hop_size=None,  # segmentation hop size
         window="hanning",  # Type of the window (see scipy.signal.get_window
         reorder_chunks=True,  # Whether to reorder each consecutive segment.
