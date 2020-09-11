@@ -1,7 +1,5 @@
 # Automatic Vocal Separation and Lyrics Transcription.
 
---------------------------------------------------------------------------------
-
 This repository stores the system submitted to [MIREX 2020:Lyrics Transcription task](https://www.music-ir.org/mirex/wiki/2020:Lyrics_Transcription).
 
 ## What we submitted?
