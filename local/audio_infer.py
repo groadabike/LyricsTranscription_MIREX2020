@@ -9,6 +9,10 @@ import librosa
 from asteroid.models import ConvTasNet
 from asteroid.dsp.overlap_add import LambdaOverlapAdd
 
+import warnings
+warnings.simplefilter(action='ignore')
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--input_audio', type=str, required=True)
 parser.add_argument('--out_dir', type=str, required=True,
@@ -16,7 +20,7 @@ parser.add_argument('--out_dir', type=str, required=True,
 parser.add_argument('--use_gpu', type=int, default=0,
                     help='Whether to use the GPU for model execution')
 parser.add_argument('--sample_rate', type=int, default=16000)
-parser.add_argument('--enh_samples', type=int, default=16000)
+parser.add_argument('--enh_samples', type=int, default=18000)
 
 
 def load_audio(audio_path, sr):

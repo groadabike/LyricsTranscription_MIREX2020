@@ -81,7 +81,7 @@ conda activate mirex_grd
                 Default: 1
 --enh_samples   (int) Number of samples for chunk inferring.
                 Increase for faster inferring.
-                Default: 16000 (Suitable for GPU with 2GB RAM)
+                Default: 18000 (Suitable for GPU with 2GB RAM)
 ```
 
 Where %input_audio is the path to the audio to transcribed and %output is the path to the file where the transcription will be saved.

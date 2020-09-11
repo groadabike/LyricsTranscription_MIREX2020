@@ -14,7 +14,7 @@
 nj=1
 stage=0
 use_gpu=1
-enh_samples=16000
+enh_samples=18000
 python_path=python
 
 . ./path.sh
@@ -38,7 +38,7 @@ if [ $# != 2 ]; then
     echo "                   Default: 1"
     echo "--enh_samples      (int) Number of samples for chunk inferring."
     echo "                   Increase for faster inferring."
-    echo "                   Default: 16000 (Suitable for GPU with 2GB RAM)"
+    echo "                   Default: 18000 (Suitable for GPU with 2GB RAM)"
     echo ""   
     exit 1;
 fi
@@ -74,48 +74,65 @@ fi
 BLUE='\033[1;34m'
 GREEN='\033[1;32m'
 NC='\033[0m' # No colour
-if [[ stage -le 0 ]]; then
+if [[ $stage -le 0 ]]; then
   echo -e "Starting transcription of ${GREEN}${input_audio}${NC}"
   echo -ne "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Enhancing vocal audio segment\r"
+ if [ -f data/$audio_id/.error ]; then rm data/$audio_id/.error; fi
 
-  $python_path local/audio_infer.py \
+ (
+    {
+      $python_path local/audio_infer.py \
       --enh_samples $enh_samples \
       --out_dir data/$audio_id \
       --input_audio $input_audio \
       --use_gpu $use_gpu
+   } > log.txt 2>&1  || exit 1
+ ) || touch data/$audio_id/.error
+
+  if [ -f data/$audio_id/.error ]; then
+    echo "$0: something went wrong in inferring. Try reducing --enh_samples"
+    exit 1
+  fi
+
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Enhancing vocal audio segment........done"
 fi
 
 mfcc_dir=data/$audio_id/${audio_id}_mfcc
 mkdir -p $mfcc_dir
-if [[ stage -le 1 ]]; then
+if [[ $stage -le 1 ]]; then
   echo -ne "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Preparing data for transcription\r"
-  $python_path local/prepare_data.py \
+  {
+    $python_path local/prepare_data.py \
       --audio_id $audio_id \
       --audio data/$audio_id/"enhanced.wav" \
       --datadir $mfcc_dir
+  } >> log.txt 2>&1
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Preparing data for transcription.......done"
 fi
 
-if [[ stage -le 2 ]]; then
-  echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting high resolution MFCC"
+if [[ $stage -le 2 ]]; then
+  echo -ne "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting high resolution MFCC\r"
 
+  {
     utils/fix_data_dir.sh $mfcc_dir
     steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
       --cmd "$train_cmd" $mfcc_dir
     steps/compute_cmvn_stats.sh $mfcc_dir
+  } >> log.txt 2>&1
 
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting high resolution MFCC......done"
 fi
 
 ivector_dir=data/$audio_id/${audio_id}_ivectors
-if [[ stage -le 3 ]]; then
-  echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting i-vectors"
+if [[ $stage -le 3 ]]; then
+  echo -ne "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting i-vectors\r"
+  {
     steps/online/nnet2/extract_ivectors_online.sh \
       --cmd "$train_cmd" --nj "$nj" \
       $mfcc_dir \
       exp/nnet3/extractor \
       $ivector_dir
+  } >> log.txt 2>&1
 
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting i-vectors......done"
 fi
@@ -127,56 +144,65 @@ dir=exp/chain/tdnn_sp
 
 pitch_dir=data/$audio_id/${audio_id}_pitch
 feat_to_join="$feat_to_join  $pitch_dir"
-if [[ stage -le 4 ]]; then
-  echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting pitch features"
-  utils/copy_data_dir.sh $mfcc_dir $pitch_dir
-  utils/fix_data_dir.sh $pitch_dir
-  local/features/make_pitch.sh --nj $nj --cmd "$train_cmd" \
-    --pitch-config $pitch_conf $pitch_dir
-  steps/compute_cmvn_stats.sh $pitch_dir
+if [[ $stage -le 4 ]]; then
+  echo -ne "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting pitch features\r"
+  {
+    utils/copy_data_dir.sh $mfcc_dir $pitch_dir
+    utils/fix_data_dir.sh $pitch_dir
+    local/features/make_pitch.sh --nj $nj --cmd "$train_cmd" \
+      --pitch-config $pitch_conf $pitch_dir
+    steps/compute_cmvn_stats.sh $pitch_dir
+   } >> log.txt 2>&1
 
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting pitch features......done"
 fi
 
 perturb_dir=data/$audio_id/${audio_id}_perturbation
 feat_to_join="$feat_to_join  $perturb_dir"
-if [[ stage -le 5 ]]; then
-  echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting perturbation features"
-
-  utils/copy_data_dir.sh $mfcc_dir $perturb_dir
-  utils/fix_data_dir.sh $perturb_dir
-  local/features/make_jitter.sh --nj $nj --cmd "$train_cmd" \
-    --jitter_conf $perturbation_conf --python_path $python_path \
-    $perturb_dir
-  steps/compute_cmvn_stats.sh $perturb_dir
+if [[ $stage -le 5 ]]; then
+  echo -ne "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting perturbation features\r"
+  {
+    utils/copy_data_dir.sh $mfcc_dir $perturb_dir
+    utils/fix_data_dir.sh $perturb_dir
+    local/features/make_jitter.sh --nj $nj --cmd "$train_cmd" \
+      --jitter_conf $perturbation_conf --python_path $python_path \
+      $perturb_dir
+    steps/compute_cmvn_stats.sh $perturb_dir
+   } >> log.txt 2>&1
 
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Extracting perturbation features......done"
 fi
 
 paste_dir=data/$audio_id/${audio_id}_pasted
-if [[ stage -le 6 ]]; then
-  echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Joining features"
-
-  steps/paste_feats.sh --length_tolerance 10 --nj $nj \
-    --cmd "$train_cmd" $feat_to_join \
-    ${paste_dir} ${paste_dir}/log ${paste_dir}/data
-  steps/compute_cmvn_stats.sh ${paste_dir} \
-      ${paste_dir}/log ${paste_dir}/data
+if [[ $stage -le 6 ]]; then
+  echo -ne "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Joining features\r"
+  {
+    steps/paste_feats.sh --length_tolerance 10 --nj $nj \
+      --cmd "$train_cmd" $feat_to_join \
+      ${paste_dir} ${paste_dir}/log ${paste_dir}/data
+    steps/compute_cmvn_stats.sh ${paste_dir} \
+        ${paste_dir}/log ${paste_dir}/data
+   } >> log.txt 2>&1
 
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Joining features......done"
 fi
-
 
 lmwt=11
 wip=0.0
 graph_dir=$dir/graph_3G
 if [[ $stage -le 7 ]]; then
-  echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Decoding audio file"
+  echo -ne "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Decoding audio file\r"
+  gpu_opt=""
+  if [[ $use_gpu -eq 1 ]]; then
+     gpu_opt="--use_gpu true"
+  fi
 
   rm $dir/.error 2>/dev/null || true
   (
-  steps/nnet3/decode.sh \
+  {
+   steps/nnet3/decode.sh \
     --acwt 1.0  \
+    $gpu_opt \
     --post-decode-acwt 10.0 \
     --nj $nj \
     --num-threads 4 \
@@ -193,6 +219,8 @@ if [[ $stage -le 7 ]]; then
       data/lang_{3G,4G} \
       $paste_dir \
       $dir/decode_${audio_id}_{3G,4G} || exit 1
+  } >> log.txt 2>&1
+
   ) || touch $dir/.error &
   wait
   if [ -f $dir/.error ]; then
@@ -205,20 +233,21 @@ fi
 
 decode_dir=$dir/decode_${audio_id}_4G
 if [[ $stage -le 8 ]];then
-  echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Finalising process"
-
-  lattice-1best --lm-scale=$lmwt --acoustic-scale=0.1 --word-ins-penalty=$wip \
-    "ark,s,cs:gunzip -c $decode_dir/lat.1.gz |" ark:- |
-  nbest-to-linear ark,t:- ark,t:data/${audio_id}/ali \
-    "ark,t:|int2sym.pl -f 2- data/lang_4G/words.txt > data/${audio_id}/transcription" \
-    ark,t:data/${audio_id}/lm_cost \
-    ark,t:data/${audio_id}/ac_cost
+  echo -ne "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Finalising process\r"
+  {
+    lattice-1best --lm-scale=$lmwt --acoustic-scale=0.1 --word-ins-penalty=$wip \
+      "ark,s,cs:gunzip -c $decode_dir/lat.1.gz |" ark:- |
+    nbest-to-linear ark,t:- ark,t:data/${audio_id}/ali \
+      "ark,t:|int2sym.pl -f 2- data/lang_4G/words.txt > data/${audio_id}/transcription" \
+      ark,t:data/${audio_id}/lm_cost \
+      ark,t:data/${audio_id}/ac_cost
+   } >> log.txt 2>&1
 
   echo -e "${BLUE}[${GREEN}$audio_id${BLUE}]${NC} Finalising process......done"
 fi
 
 if [[ $stage -le 9 ]]; then
-  mkdir -p "$(dirname "$output")"
+  mkdir -p "$(dirname "$output")" || true
   cut -f 2- -d ' ' data/${audio_id}/transcription > $output
 fi
 
