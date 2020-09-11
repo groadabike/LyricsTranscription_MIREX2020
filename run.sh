@@ -13,7 +13,7 @@
 # Apache 2.0
 nj=1
 stage=0
-python_path=$HOME/miniconda3/bin/python
+use_gpu=1
 
 . ./path.sh
 . ./cmd.sh
@@ -30,7 +30,7 @@ if [ $# != 2 ]; then
     echo "and the path to the output file as %output, the script should be called as"
     echo "$0 --python_path python %input_audio %output"
     echo "[Option]"
-    echo "--python_path     Path to the python you'll use for the transcription"
+    echo "--use_gpu         0 = False | 1 = True, Default: 1"
     echo ""   
     exit 1;
 fi

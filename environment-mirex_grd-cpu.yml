@@ -1,0 +1,13 @@
+name: mirex_grd
+
+channels:
+  - conda-forge
+  - pytorch
+
+dependencies:
+  - ffmpeg==4.3.1
+  - sox==14.4.4
+  - pip
+  - pip:
+      - asteroid==0.3.3
+      - praat-parselmouth==0.3.3

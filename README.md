@@ -1,12 +1,5 @@
 # Automatic Vocal Separation and Lyrics Transcription.
 
-<div align="center">
-<img src="images/system_pipeline.png" width="100%">
-
-**Diagram of the system pipeline.** 
-
-</div>
-
 --------------------------------------------------------------------------------
 
 This repository stores the system submitted to [MIREX 2020:Lyrics Transcription task](https://www.music-ir.org/mirex/wiki/2020:Lyrics_Transcription).
@@ -18,6 +11,13 @@ In this system, we utilised [Asteroid Pytorch-based audio source separation tool
 for the construction of the vocal separation module. The lyrics transcription module was constructed using 
 the [Kaldi ASR toolkit](http://kaldi-asr.org/)[2]. 
 
+<div align="center">
+<img src="images/system_pipeline.png" width="100%">
+
+**Diagram of the system pipeline.** 
+
+</div>
+
 ## Content
 - [Installation](#installation)
 - [Usage](#Usage)
@@ -25,6 +25,16 @@ the [Kaldi ASR toolkit](http://kaldi-asr.org/)[2].
 - [References](#References)
 
 ## Installation
+
+### Clone this repository
+
+Clone this repository with:
+```bash
+git clone https://github.com/groadabike/Automatic-Vocal-Separation-and-Lyrics-Transcription.git 
+```
+
+### Install Kaldi
+
 First, we need to download and install Kaldi toolkit.
 The script extras/check_dependencies.sh will tell you if you need to install some Kaldi dependencies.  
 Please, ensure you resolve all the comments before you can continue.
@@ -42,30 +52,29 @@ cd ../scr
 make -j clean depend; make -j 4
 ```
 
-Now, we will install some additional tool.
-1. We will install miniconda; this will be saved in home/<user>
+### Prepare Python environment
+
+If you have Anaconda installed, you can create the environment from the root of this repository:
 ```bash
-cd ../tools
-./extras/install_miniconda.sh
-```  
-2. Please download SRILM from http://www.speech.sri.com/projects/srilm/download.html.  
-Rename the file as:
-```
-e.g.:
-mv srilm-1.7.3.tar.gz srilm.tar.gz
-```
-copy srilm.tar.gz into kaldi/tools and run 
-```
-./extras/install_srilm.sh
+conda env update -f environment-mirex_grd-gpu.yml # If you have GPU's
+conda env update -f environment-mirex_grd-cpu.yml # If you don't have GPU's
+conda activate mirex_grd
 ```
 
 ## Usage
-Clone this project and run it as:
+Run this program as:    
 ```bash
-run.sh %input_audio %output
+./run.sh [options] %input_audio %output
+./run.sh --use_gpu 1 %input_audio %output
+[options]
+--use_gpu  0 = False | 1 = True
+           Default: 1
 ```
 Where %input_audio is the path to the audio to transcribed and %output is the path to the file where the transcription will be saved.
 Note that the %output will be overwritten if exist.
+
+### Output 
+The output of the system is the transcribed lyrics and will be saved in %output.
 
 ## Cite
 ```

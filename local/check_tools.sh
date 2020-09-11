@@ -58,7 +58,7 @@ try:
     print('1')
 except ImportError:
     print('0')"`
-    
+
 if [ "$result" != "1" ]; then
   ${miniconda_dir}/bin/python -m pip install soundfile
 fi
@@ -70,7 +70,7 @@ try:
     print('1')
 except ImportError:
     print('0')"`
-    
+
 if [ "$result" != "1" ]; then
     ${miniconda_dir}/bin/python -m pip install asteroid==0.3.3
 fi
@@ -87,8 +87,6 @@ except ImportError:
 if [ "$result" != "1" ]; then
   ${miniconda_dir}/bin/python -m pip install praat-parselmouth
 fi
-
-
 
 fmmpeg_conda=`command -v ${miniconda_dir}/bin/ffmpeg 2>/dev/null`
 if [ -z "${fmmpeg_conda}" ]; then
