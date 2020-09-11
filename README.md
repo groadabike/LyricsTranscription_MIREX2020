@@ -28,7 +28,7 @@ the [Kaldi ASR toolkit](http://kaldi-asr.org/)[2].
 
 Clone this repository with:
 ```bash
-git clone https://github.com/groadabike/Automatic-Vocal-Separation-and-Lyrics-Transcription.git 
+git clone https://github.com/groadabike/LyricsTranscription_MIREX2020.git 
 ```
 
 ### Install Kaldi
