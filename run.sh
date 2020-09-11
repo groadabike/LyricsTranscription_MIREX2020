@@ -26,7 +26,6 @@ echo "Using steps and utils from WSJ recipe"
 
 
 . ./utils/parse_options.sh
-source activate mirex_grd
 
 if [ $# != 2 ]; then
     echo "Usage: $0 [options] %input_audio <output>"
@@ -34,7 +33,12 @@ if [ $# != 2 ]; then
     echo "and the path to the output file as %output, the script should be called as"
     echo "$0 --python_path python %input_audio %output"
     echo "[Option]"
-    echo "--use_gpu         0 = False | 1 = True, Default: 1"
+    echo "--use_gpu          Whether or not us GPU,"
+    echo "                   0 = False | 1 = True"
+    echo "                   Default: 1"
+    echo "--enh_samples      (int) Number of samples for chunk inferring."
+    echo "                   Increase for faster inferring."
+    echo "                   Default: 16000 (Suitable for GPU with 2GB RAM)"
     echo ""   
     exit 1;
 fi

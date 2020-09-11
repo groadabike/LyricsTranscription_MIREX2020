@@ -29,6 +29,7 @@ the [Kaldi ASR toolkit](http://kaldi-asr.org/)[2].
 Clone this repository with:
 ```bash
 git clone https://github.com/groadabike/LyricsTranscription_MIREX2020.git 
+cd LyricsTranscription_MIREX2020
 ```
 
 ### Prepare Python environment
