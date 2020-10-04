@@ -43,7 +43,7 @@ def main(conf):
         window_size=conf['enh_samples'],  # Size of segmenting window
         hop_size=None,  # segmentation hop size
         window="hanning",  # Type of the window (see scipy.signal.get_window
-        reorder_chunks=True,  # Whether to reorder each consecutive segment.
+        reorder_chunks=False,  # Whether to reorder each consecutive segment.
         enable_grad=False,  # Set gradient calculation on of off (see torch.set_grad_enabled)
     )
 
