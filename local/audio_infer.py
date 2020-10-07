@@ -43,7 +43,7 @@ def main(conf):
         window_size=conf['enh_samples'],  # Size of segmenting window
         hop_size=None,  # segmentation hop size
         window="hanning",  # Type of the window (see scipy.signal.get_window
-        reorder_chunks=False,  # Whether to reorder each consecutive segment.
+        reorder_chunks=True,  # Whether to reorder each consecutive segment.
         enable_grad=False,  # Set gradient calculation on of off (see torch.set_grad_enabled)
     )
 
@@ -65,7 +65,7 @@ def main(conf):
     mix_np = mix.squeeze(0).cpu().data.numpy()
     
     est_sources_np = est_sources.squeeze(0).cpu().data.numpy()
-    est_src = est_sources_np[0]
+    est_src = est_sources_np[1]
    
     # Save enhanced
     est_src *= np.max(np.abs(mix_np)) / np.max(np.abs(est_src))
