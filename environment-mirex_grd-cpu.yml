@@ -10,5 +10,5 @@ dependencies:
   - sox==14.4.2
   - pip
   - pip:
-      - asteroid==0.3.3
+      - asteroid==0.3.4
       - praat-parselmouth==0.3.3
